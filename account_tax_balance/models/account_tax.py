@@ -60,14 +60,8 @@ class AccountTax(models.Model):
               WHERE
                 date >= %s AND
                 date <= %s AND
-                company_id = %s AND (
-                  tax_line_id = at.id OR
-                  EXISTS (
-                    SELECT 1 FROM account_move_line_account_tax_rel
-                    WHERE account_move_line_id = aml.id AND
-                      account_tax_id = at.id
-                  )
-                )
+                company_id = %s AND
+                  tax_code_id = at.id
             )
         """
         from_date, to_date, company_id, target_move = self.get_context_values()
@@ -139,7 +133,7 @@ class AccountTax(models.Model):
     def get_balance_domain(self, state_list, type_list):
         domain = [
             ('move_id.state', 'in', state_list),
-            ('tax_line_id', '=', self.id),
+            ('tax_code_id', '=', self.id),
         ]
         if type_list:
             domain.append(('move_id.move_type', 'in', type_list))
@@ -148,7 +142,7 @@ class AccountTax(models.Model):
     def get_base_balance_domain(self, state_list, type_list):
         domain = [
             ('move_id.state', 'in', state_list),
-            ('tax_ids', 'in', self.id),
+            ('tax_code_id', 'in', self.id),
         ]
         if type_list:
             domain.append(('move_id.move_type', 'in', type_list))
