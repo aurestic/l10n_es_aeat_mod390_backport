@@ -48,7 +48,7 @@ class AccountMove(models.Model):
                     ]
                 balances = self.env["account.move.line"].read_group(
                     domain=domain,
-                    fields=["move_id", "balance"],
+                    fields=["move_id", "debit", "credit"],
                     groupby=["move_id"],
                 )
                 for balance in balances:
@@ -56,4 +56,5 @@ class AccountMove(models.Model):
                     # Discard the move for next searches
                     move_ids.discard(move.id)
                     # Update its type
-                    move.move_type = criteria(balance["balance"])
+                    balance = balance["debit" or 0.0] - balance["credit" or 0.0]
+                    move.move_type = criteria(balance)

@@ -61,7 +61,10 @@ class AccountTax(models.Model):
                 date >= %s AND
                 date <= %s AND
                 company_id = %s AND
-                  tax_code_id = at.id
+                  (aml.tax_code_id = at.tax_code_id or
+                  aml.tax_code_id = at.base_code_id or
+                  aml.tax_code_id = at.ref_base_code_id or
+                  aml.tax_code_id = at.ref_tax_code_id)
             )
         """
         from_date, to_date, company_id, target_move = self.get_context_values()
@@ -126,23 +129,34 @@ class AccountTax(models.Model):
         # balance is debit - credit whereas on tax return you want to see what
         # vat has to be paid so:
         # VAT on sales (credit) - VAT on purchases (debit).
-        balance = self.env['account.move.line'].\
-            read_group(domain, ['balance'], [])[0]['balance']
+        group = self.env['account.move.line'].\
+            read_group(domain, ['debit', 'credit'], [])[0]
+        balance = (group['debit'] or 0.0) - (group['credit'] or 0.0)
         return balance and -balance or 0
 
     def get_balance_domain(self, state_list, type_list):
+        tax_codes = []
+        if self.tax_code_id:
+            tax_codes.append(self.tax_code_id.id)
+        if self.ref_tax_code_id:
+            tax_codes.append(self.ref_tax_code_id.id)
         domain = [
             ('move_id.state', 'in', state_list),
-            ('tax_code_id', '=', self.id),
+            ('tax_code_id', 'in', tax_codes),
         ]
         if type_list:
             domain.append(('move_id.move_type', 'in', type_list))
         return domain
 
     def get_base_balance_domain(self, state_list, type_list):
+        tax_codes = []
+        if self.base_code_id:
+            tax_codes.append(self.base_code_id.id)
+        if self.ref_base_code_id:
+            tax_codes.append(self.ref_base_code_id.id)
         domain = [
             ('move_id.state', 'in', state_list),
-            ('tax_code_id', 'in', self.id),
+            ('tax_code_id', 'in', tax_codes),
         ]
         if type_list:
             domain.append(('move_id.move_type', 'in', type_list))
