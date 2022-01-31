@@ -596,7 +596,7 @@ msgid "Support Type"
 msgstr "Tipus de suport"
 
 #. module: l10n_es_aeat_mod390
-#: model:ir.model.fields,field_description:l10n_es_aeat_mod390.field_l10n_es_aeat_mod390_report_tax_line_ids
+#: model:ir.model.fields,field_description:l10n_es_aeat_mod390.field_l10n_es_aeat_mod390_report_tax_lines
 #: model:ir.ui.view,arch_db:l10n_es_aeat_mod390.view_l10n_es_aeat_mod390_report_form
 msgid "Tax lines"
 msgstr "Línies d'imposts"

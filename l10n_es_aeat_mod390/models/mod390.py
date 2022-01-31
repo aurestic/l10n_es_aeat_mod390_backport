@@ -469,6 +469,22 @@ class L10nEsAeatMod390Report(models.Model):
 
     @api.multi
     @api.depends('tax_lines')
+    def _compute_casilla_58(self):
+        for report in self:
+            report.casilla_58 = sum(report.tax_lines.filtered(
+                lambda x: x.field_number in (220, 631, 633)
+            ).mapped('amount'))
+
+    @api.multi
+    @api.depends('tax_lines')
+    def _compute_casilla_59(self):
+        for report in self:
+            report.casilla_59 = sum(report.tax_lines.filtered(
+                lambda x: x.field_number in (221, 632, 634)
+            ).mapped('amount'))
+
+    @api.multi
+    @api.depends('tax_lines')
     def _compute_casilla_597(self):
         for report in self:
             report.casilla_597 = sum(report.tax_lines.filtered(
@@ -485,22 +501,6 @@ class L10nEsAeatMod390Report(models.Model):
                 lambda x: x.field_number in (
                     588, 590, 592, 636, 594, 596, 638,
                 )
-            ).mapped('amount'))
-
-    @api.multi
-    @api.depends('tax_lines')
-    def _compute_casilla_58(self):
-        for report in self:
-            report.casilla_58 = sum(report.tax_lines.filtered(
-                lambda x: x.field_number in (220, 631, 633)
-            ).mapped('amount'))
-
-    @api.multi
-    @api.depends('tax_lines')
-    def _compute_casilla_59(self):
-        for report in self:
-            report.casilla_59 = sum(report.tax_lines.filtered(
-                lambda x: x.field_number in (221, 632, 634)
             ).mapped('amount'))
 
     @api.multi
