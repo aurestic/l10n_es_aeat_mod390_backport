@@ -14,6 +14,7 @@
         'l10n_es',
         'l10n_es_aeat',
         'account_tax_balance',
+        'l10n_es_tax_5',
     ],
     'data': [
         # 2017
@@ -60,6 +61,9 @@
         'views/mod390_view.xml',
         'security/ir.model.access.csv',
         'security/l10n_es_aeat_mod390_security.xml',
+        # 2022
+        "data/2022/aeat.model.export.config.csv",
+        "data/2022/aeat.model.export.config.line.csv",
     ],
     'installable': True,
 }
