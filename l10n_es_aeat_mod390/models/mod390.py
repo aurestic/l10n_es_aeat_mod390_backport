@@ -4,6 +4,7 @@
 
 from openerp import _, api, fields, exceptions, models
 from datetime import datetime
+from calendar import monthrange
 
 
 REQUIRED_ON_CALCULATED = {
@@ -62,12 +63,14 @@ class L10nEsAeatMod390Report(models.Model):
         states=REQUIRED_ON_CALCULATED,
     )
     main_activity_code = fields.Selection(
-        selection=ACTIVITY_CODE_SELECTION, states=REQUIRED_ON_CALCULATED,
+        selection=ACTIVITY_CODE_SELECTION,
         string=u"Código actividad principal (antiguo)", readonly=True,
     )
     main_activity_code_id = fields.Many2one(
         comodel_name="l10n.es.aeat.mod303.report.activity.code",
         string="Código actividad principal",
+        readonly=True,
+        states=REQUIRED_ON_CALCULATED,
     )
     main_activity_iae = fields.Char(
         string=u"Epígrafe I.A.E. actividad principal", readonly=True, size=4,
@@ -600,3 +603,62 @@ class L10nEsAeatMod390Report(models.Model):
         if not date:
             return ''
         return datetime.strftime(fields.Date.from_string(date), "%d%m%Y")
+
+    @api.onchange("period_type", "fiscalyear_id")
+    def _onchange_period_type_fiscalyear(self):
+        date_start = date_end = None
+        for report in self:
+            if not report.fiscalyear_id or not report.period_type:
+                continue
+            else:
+                year = fields.Date.from_string(report.fiscalyear_id.date_start).year
+                if report.period_type in ("1T", "2T", "3T", "4T"):
+                    # Trimestral                    
+                    starting_month = 1 + (int(report.period_type[0]) - 1) * 3
+                    ending_month = starting_month + 2
+                    date_start = fields.Date.from_string(
+                        "{}-{}-01".format(year, starting_month)
+                    )
+                    date_end = fields.Date.from_string(
+                        "%s-%s-%s"
+                        % (
+                            year,
+                            ending_month,
+                            monthrange(year, ending_month)[1],
+                        )
+                    )
+                elif report.period_type in (
+                    "01",
+                    "02",
+                    "03",
+                    "04",
+                    "05",
+                    "06",
+                    "07",
+                    "08",
+                    "09",
+                    "10",
+                    "11",
+                    "12",
+                ):
+                    # Mensual
+                    month = int(report.period_type)
+                    date_start = fields.Date.from_string(
+                        "{}-{}-01".format(year, month)
+                    )
+                    date_end = fields.Date.from_string(
+                        "%s-%s-%s"
+                        % (year, month, monthrange(year, month)[1])
+                    )
+
+        activities = self.env["l10n.es.aeat.mod303.report.activity.code"].search(
+            [
+                '|',
+                ('period_type', '=', False), ('period_type', '=', self.period_type),
+                '&',
+                '|', ('date_start', '=', False), ('date_start', '<=', date_start),
+                '|', ('date_end', '=', False), ('date_end', '>=', date_end),
+            ])
+        res = {}
+        res["domain"] = {'main_activity_code_id': [('id', 'in', activities.ids)]}
+        return res

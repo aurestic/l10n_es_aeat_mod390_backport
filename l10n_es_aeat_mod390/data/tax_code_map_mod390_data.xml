@@ -708,6 +708,7 @@
         <field name="field_type">base</field>
         <field name="sum_type">both</field>
         <field name="inverse" eval="False"/>
+        <field name="tax_codes" eval="[(6, False, [ref('l10n_es.account_tax_code_template_ONSOCIDSPQOEDAD')])]"/>
     </record>
 
     <record id="aeat_mod390_map_line_230" model="aeat.mod.map.tax.code.line">
