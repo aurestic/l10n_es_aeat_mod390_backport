@@ -675,7 +675,7 @@
         <field name="field_type">base</field>
         <field name="sum_type">both</field>
         <field name="inverse" eval="False"/>
-        <field name="tax_codes" eval="[(6, False, [ref('l10n_es.account_tax_code_template_EYOA'), ref('l10n_es.account_tax_code_template_ONSOCIDSPQOEDAD')])]"/>
+        <field name="tax_codes" eval="[(6, False, [ref('l10n_es.account_tax_code_template_EYOA')])]"/>
     </record>
 
     <record id="aeat_mod390_map_line_105" model="aeat.mod.map.tax.code.line">
@@ -696,7 +696,7 @@
         <field name="move_type">regular</field>
         <field name="field_type">base</field>
         <field name="sum_type">both</field>
-        <field name="inverse" eval="True"/>
+        <field name="inverse" eval="False"/>
         <field name="tax_codes" eval="[(6, False, [ref('l10n_es.account_tax_code_template_REBI05'), ref('l10n_es.account_tax_code_template_REBI014'), ref('l10n_es.account_tax_code_template_REBI52')])]"/>
     </record>
 
@@ -853,6 +853,19 @@
         <field name="inverse" eval="False" />
     </record>
 
+    <record id="aeat_mod390_map_line_125" model="aeat.mod.map.tax.code.line">
+        <field name="map_parent_id" ref="aeat_mod390_map" />
+        <field name="field_number">125</field>
+        <field name="name">Operaciones sujetas con inversión del sujeto pasivo</field>
+        <field name="move_type">regular</field>
+        <field name="field_type">amount</field>
+        <field name="sum_type">both</field>
+        <field name="inverse" eval="False" />
+        <field
+            name="tax_codes"
+            eval="[(6, False, [ref('l10n_es.account_tax_code_template_VISP')])]"
+        />
+    </record>
 
     <!-- CASILLAS QUE SE HAN PUESTO A MANO A PARTIR DE LA 67-->
 <!--     <record id="aeat_mod390_map_line_196" model="l10n.es.aeat.map.tax.line">

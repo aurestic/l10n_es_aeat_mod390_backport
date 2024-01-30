@@ -424,7 +424,7 @@
         <field name="sequence">36</field>
         <field name="export_config_id" ref="aeat_mod390_2021_sub06_export_config"/>
         <field name="name">10. Volumen de operaciones - Operaciones sujetas con inversión del sujeto pasivo [125]</field>
-        <field name="fixed_value">0</field>
+        <field name="expression">${object.tax_lines.filtered(lambda r: r.field_number == 125).amount}</field>
         <field name="export_type">float</field>
         <field name="apply_sign" eval="True"/>
         <field name="size">17</field>
