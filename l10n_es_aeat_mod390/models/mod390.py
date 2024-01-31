@@ -575,7 +575,7 @@ class L10nEsAeatMod390Report(models.Model):
                 report.tax_lines.filtered(
                     lambda x: x.field_number in (
                         99, 653, 103, 104, 105, 110, 112, 100, 101, 102, 227,
-                        228,
+                        228, 125,
                     )
                 ).mapped('amount')
             ) - sum(
